@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SnailSubsystem;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 import static frc.robot.Constants.ElectricalLayout.CONTROLLER_DRIVER_ID;
 import static frc.robot.Constants.ElectricalLayout.CONTROLLER_OPERATOR_ID;
+import static frc.robot.Constants.UPDATE_PERIOD;;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,6 +25,7 @@ public class RobotContainer {
     
     private final ArrayList<SnailSubsystem> subsystems;
 
+    private Notifier updateNotifier;
     private int outputCounter;
 
     /**
@@ -42,6 +45,9 @@ public class RobotContainer {
         outputCounter = 0;
 
         SmartDashboard.putBoolean("Testing", false);
+
+        updateNotifier = new Notifier(this::update);
+        updateNotifier.startPeriodic(UPDATE_PERIOD);
     }
 
     /**
@@ -65,6 +71,18 @@ public class RobotContainer {
         return null;
     }
 
+    /**
+     * Update all of the subsystems
+     * This is run in a separate loop at a faster rate to:
+     * a) update subsystems faster
+     * b) prevent packet delay from driver station from delaying response from our robot
+     */
+    private void update() {
+        for(SnailSubsystem subsystem : subsystems) {
+            subsystem.update();
+        }
+    }
+
     public void outputValues() {
         if(outputCounter % 3 == 0) {
             subsystems.get(outputCounter / 3).outputValues();
@@ -73,7 +91,7 @@ public class RobotContainer {
         outputCounter = (outputCounter + 1) % (subsystems.size() * 3);
     }
 
-    public void setConstantTuning() {
+    public void setUpConstantTuning() {
         for(SnailSubsystem subsystem : subsystems) {
             subsystem.setUpConstantTuning();
         }

@@ -22,5 +22,6 @@ public final class Constants {
     }
 
     public static double PI = 3.14159265;
+    public static double UPDATE_PERIOD = 0.010; // seconds
 
 }

@@ -40,6 +40,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.setConstantTuning();
+        robotContainer.setUpConstantTuning();
     }
 }
