@@ -1,12 +1,18 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SnailSubsystem;
 import frc.robot.util.SnailController;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Optional;
+
+import badlog.lib.BadLog;
 
 import static frc.robot.Constants.ElectricalLayout.CONTROLLER_DRIVER_ID;
 import static frc.robot.Constants.ElectricalLayout.CONTROLLER_OPERATOR_ID;
@@ -20,10 +26,12 @@ import static frc.robot.Constants.UPDATE_PERIOD;;
  */
 public class RobotContainer {
 
-    private final SnailController driveController;
-    private final SnailController operatorController;
+    private SnailController driveController;
+    private SnailController operatorController;
     
-    private final ArrayList<SnailSubsystem> subsystems;
+    private ArrayList<SnailSubsystem> subsystems;
+
+    private BadLog log;
 
     private Notifier updateNotifier;
     private int outputCounter;
@@ -35,19 +43,27 @@ public class RobotContainer {
         driveController = new SnailController(CONTROLLER_DRIVER_ID);
         operatorController = new SnailController(CONTROLLER_OPERATOR_ID);
 
-        // declare each of the subsystems here
-
-        subsystems = new ArrayList<>();
-        // add each of the subsystems to the arraylist here
-
+        configureSubsystems();
         configureAutoChoosers();
         configureButtonBindings();
+        configureLogging();
+        
         outputCounter = 0;
 
         SmartDashboard.putBoolean("Testing", false);
 
         updateNotifier = new Notifier(this::update);
         updateNotifier.startPeriodic(UPDATE_PERIOD);
+    }
+
+    /**
+     * Declare all of our subsystems and their default bindings
+     */
+    private void configureSubsystems() {
+        // declare each of the subsystems here
+
+        subsystems = new ArrayList<>();
+        // add each of the subsystems to the arraylist here
     }
 
     /**
@@ -69,6 +85,29 @@ public class RobotContainer {
      */
     public Command getAutoCommand() {
         return null;
+    }
+
+    /**
+     * Set up the BadLog logging system from FRC Team 1014
+     */
+    public void configureLogging() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+        log = BadLog.init("/home/lvuser/log/" + formatter.format(new Date()) + ".bag");
+        
+        BadLog.createValue("Event Name",
+                Optional.ofNullable(DriverStation.getInstance().getEventName()).orElse(""));
+        BadLog.createValue("Match Type", DriverStation.getInstance().getMatchType().toString());
+        BadLog.createValue("Match Number", "" + DriverStation.getInstance().getMatchNumber());
+        BadLog.createValue("Alliance", DriverStation.getInstance().getAlliance().toString());
+        BadLog.createValue("Location", "" + DriverStation.getInstance().getLocation());
+        
+        BadLog.createTopic("Match Time", "s", () -> DriverStation.getInstance().getMatchTime());
+
+        for(SnailSubsystem subsystem : subsystems) {
+            subsystem.initLogging();
+        }
+
+        log.finishInitialization();
     }
 
     /**
