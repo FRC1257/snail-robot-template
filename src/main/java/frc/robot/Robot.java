@@ -18,8 +18,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-        robotContainer.outputValues();
-        if(SmartDashboard.getBoolean("Testing", false)) robotContainer.getConstantTuning();
+        robotContainer.displayShuffleboard();
+        if(SmartDashboard.getBoolean("Testing", false)) robotContainer.tuningPeriodic();
     }
 
     @Override
@@ -40,6 +40,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        robotContainer.setUpConstantTuning();
+        robotContainer.tuningInit();
     }
 }

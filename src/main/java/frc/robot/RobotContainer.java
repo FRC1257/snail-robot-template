@@ -83,23 +83,23 @@ public class RobotContainer {
         }
     }
 
-    public void outputValues() {
+    public void displayShuffleboard() {
         if(outputCounter % 3 == 0) {
-            subsystems.get(outputCounter / 3).outputValues();
+            subsystems.get(outputCounter / 3).displayShuffleboard();
         }
 
         outputCounter = (outputCounter + 1) % (subsystems.size() * 3);
     }
 
-    public void setUpConstantTuning() {
+    public void tuningInit() {
         for(SnailSubsystem subsystem : subsystems) {
-            subsystem.setUpConstantTuning();
+            subsystem.tuningInit();
         }
     }
 
-    public void getConstantTuning() {
+    public void tuningPeriodic() {
         if(outputCounter % 3 == 0) {
-            subsystems.get(outputCounter / 3).getConstantTuning();
+            subsystems.get(outputCounter / 3).tuningPeriodic();
         }
     }
 }
