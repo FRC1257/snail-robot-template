@@ -20,10 +20,10 @@ import static frc.robot.Constants.UPDATE_PERIOD;;
  */
 public class RobotContainer {
 
-    private final SnailController driveController;
-    private final SnailController operatorController;
+    private SnailController driveController;
+    private SnailController operatorController;
     
-    private final ArrayList<SnailSubsystem> subsystems;
+    private ArrayList<SnailSubsystem> subsystems;
 
     private Notifier updateNotifier;
     private int outputCounter;
@@ -35,19 +35,26 @@ public class RobotContainer {
         driveController = new SnailController(CONTROLLER_DRIVER_ID);
         operatorController = new SnailController(CONTROLLER_OPERATOR_ID);
 
-        // declare each of the subsystems here
-
-        subsystems = new ArrayList<>();
-        // add each of the subsystems to the arraylist here
-
+        configureSubsystems();
         configureAutoChoosers();
         configureButtonBindings();
+        
         outputCounter = 0;
 
         SmartDashboard.putBoolean("Testing", false);
 
         updateNotifier = new Notifier(this::update);
         updateNotifier.startPeriodic(UPDATE_PERIOD);
+    }
+
+    /**
+     * Declare all of our subsystems and their default bindings
+     */
+    private void configureSubsystems() {
+        // declare each of the subsystems here
+
+        subsystems = new ArrayList<>();
+        // add each of the subsystems to the arraylist here
     }
 
     /**
