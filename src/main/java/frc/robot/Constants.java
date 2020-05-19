@@ -15,9 +15,17 @@ public final class Constants {
     public static class ElectricalLayout {
         public final static int CONTROLLER_DRIVER_ID = 0;
         public final static int CONTROLLER_OPERATOR_ID = 1;
+        public final static int LEFTCLAWFORWARD_ID = 0;
+        public final static int LEFTCLAWREVERSE_ID = 1;
+        public final static int RIGHTCLAWFORWARD_ID = 2;
+        public final static int RIGHTCLAWREVERSE_ID = 3;
     }
 
     public static class Autonomous {
+        
+    }
+
+    public static class Claw {
         
     }
 
