@@ -12,10 +12,4 @@ public class XboxTrigger extends Trigger {
         this.controller = controller;
         this.leftHand = leftHand;
     }
-
-    @Override
-    public boolean get() {
-        if (leftHand) return controller.getLeftTriggerAxis() > 0.5; 
-        else return controller.getRightTriggerAxis() > 0.5;
-    }
 }
