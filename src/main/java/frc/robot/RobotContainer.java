@@ -1,112 +1,124 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.SpinAuto;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.DriveIO;
+import frc.robot.subsystems.drive.DriveIOSim;
+import frc.robot.subsystems.drive.DriveIOSparkMax;
+import frc.robot.subsystems.drive.GyroIOReal;
+
+import frc.robot.util.CommandSnailController;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.SnailSubsystem;
-import frc.robot.util.SnailController;
-
-import java.util.ArrayList;
-
-import static frc.robot.Constants.ElectricalLayout.CONTROLLER_DRIVER_ID;
-import static frc.robot.Constants.ElectricalLayout.CONTROLLER_OPERATOR_ID;
-import static frc.robot.Constants.UPDATE_PERIOD;;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the Robot
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  // Subsystems
+  private final Drive drive;
+  private final GyroIOReal gyro = GyroIOReal.getInstance();
 
-    private SnailController driveController;
-    private SnailController operatorController;
-    
-    private ArrayList<SnailSubsystem> subsystems;
+  private Mechanism2d mech = new Mechanism2d(3, 3);
 
-    private Notifier updateNotifier;
-    private int outputCounter;
+  // Controllers
+  private final CommandSnailController driver = new CommandSnailController(0);
+  private final CommandSnailController operator = new CommandSnailController(1);
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
-    public RobotContainer() {
-        driveController = new SnailController(CONTROLLER_DRIVER_ID);
-        operatorController = new SnailController(CONTROLLER_OPERATOR_ID);
+  // Dashboard inputs
+  private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Choices");
 
-        configureSubsystems();
-        configureAutoChoosers();
-        configureButtonBindings();
-        
-        outputCounter = 0;
+  private boolean isBlue = true;
 
-        SmartDashboard.putBoolean("Testing", false);
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
+  public RobotContainer() {
+    switch (Constants.currentMode) {
+      // Real robot, instantiate hardware IO implementations
+      case REAL:
+        drive = new Drive(new DriveIOSparkMax(), new Pose2d());
+        break;
 
-        updateNotifier = new Notifier(this::update);
-        updateNotifier.startPeriodic(UPDATE_PERIOD);
+      // Sim robot, instantiate physics sim IO implementations
+      case SIM:
+        drive = new Drive(new DriveIOSim(), new Pose2d());
+        break;
+
+      // Replayed robot, disable IO implementations
+      default:
+        drive = new Drive(new DriveIO() {
+        }, new Pose2d());
+        break;
     }
 
-    /**
-     * Declare all of our subsystems and their default bindings
-     */
-    private void configureSubsystems() {
-        // declare each of the subsystems here
+    // Set up robot state manager
 
-        subsystems = new ArrayList<>();
-        // add each of the subsystems to the arraylist here
-    }
+    MechanismRoot2d root = mech.getRoot("elevator", 1, 0.5);
+    // add subsystem mechanisms
+    SmartDashboard.putData("Arm Mechanism", mech);
 
-    /**
-     * Define button -> command mappings.
-     */
-    private void configureButtonBindings() {
-        
-    }
+    isBlue = DriverStation.getAlliance() == DriverStation.Alliance.Blue;
 
-    /**
-     * Set up the choosers on shuffleboard for autonomous
-     */
-    public void configureAutoChoosers() {
-        
-    }
+    // Set up auto routines
+    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addOption("Spin", new SpinAuto(drive));
 
-    /**
-     * Do the logic to return the auto command to run
-     */
-    public Command getAutoCommand() {
-        return null;
-    }
+    // Configure the button bindings
+    configureButtonBindings();
+  }
 
-    /**
-     * Update all of the subsystems
-     * This is run in a separate loop at a faster rate to:
-     * a) update subsystems faster
-     * b) prevent packet delay from driver station from delaying response from our robot
-     */
-    private void update() {
-        for(SnailSubsystem subsystem : subsystems) {
-            subsystem.update();
-        }
-    }
+  /**
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {
+    // Clear old buttons
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+    drive.setDefaultCommand(
+        new RunCommand(() -> drive.driveArcade(driver.getDriveForward(), driver.getDriveTurn()), drive));
 
-    public void displayShuffleboard() {
-        if(outputCounter % 3 == 0) {
-            subsystems.get(outputCounter / 3).displayShuffleboard();
-        }
+    // cancel trajectory
+    driver.getY().onTrue(drive.endTrajectoryCommand());
+  }
 
-        outputCounter = (outputCounter + 1) % (subsystems.size() * 3);
-    }
-
-    public void tuningInit() {
-        for(SnailSubsystem subsystem : subsystems) {
-            subsystem.tuningInit();
-        }
-    }
-
-    public void tuningPeriodic() {
-        if(outputCounter % 3 == 0) {
-            subsystems.get(outputCounter / 3).tuningPeriodic();
-        }
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return autoChooser.get();
+  }
 }

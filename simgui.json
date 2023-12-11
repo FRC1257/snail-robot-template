@@ -1,0 +1,75 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/Ungrouped/ADXRS450_Gyro[0]": "Gyro",
+      "/LiveWindow/Ungrouped/PIDController[1]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[2]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[3]": "PIDController",
+      "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
+      "/LiveWindow/Ungrouped/PWMSparkMax[0]": "Motor Controller",
+      "/LiveWindow/Ungrouped/PWMSparkMax[2]": "Motor Controller",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/SmartDashboard/Arm Mechanism": "Mechanism2d",
+      "/SmartDashboard/Auto Choices": "String Chooser",
+      "/SmartDashboard/Claw": "Subsystem",
+      "/SmartDashboard/Drive": "Subsystem",
+      "/SmartDashboard/Elevator": "Subsystem",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/PivotArm": "Subsystem"
+    },
+    "windows": {
+      "/SmartDashboard/Arm Mechanism": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Auto Choices": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/Field": {
+        "image": "C:\\Users\\akash\\Downloads\\2023-field.png",
+        "traj": {
+          "arrows": false,
+          "style": "Line"
+        },
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "AdvantageKit": {
+        "Drive": {
+          "open": true
+        },
+        "DriverStation": {
+          "Joystick0": {
+            "open": true
+          },
+          "open": true
+        },
+        "Elevator": {
+          "open": true
+        },
+        "PivotArm": {
+          "open": true
+        }
+      },
+      "FMSInfo": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      }
+    }
+  }
+}
