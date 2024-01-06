@@ -26,7 +26,7 @@ public class GyroIOReal {
         navx = new AHRS();
         resetRoll = 0;
         resetPitch = 0;
-        navx.calibrate();
+        navx.reset();
 
         gyro = new ADXRS450_Gyro();
         gyro.calibrate();

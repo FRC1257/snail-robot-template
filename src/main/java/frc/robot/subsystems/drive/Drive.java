@@ -2,9 +2,7 @@ package frc.robot.subsystems.drive;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -24,7 +22,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -134,7 +132,7 @@ public class Drive extends SubsystemBase {
     stop();
   }
 
-  public CommandBase endTrajectoryCommand() {
+  public Command endTrajectoryCommand() {
     return new InstantCommand(() -> endTrajectory(), this);
   }
 
@@ -212,7 +210,7 @@ public class Drive extends SubsystemBase {
         getRightPositionMeters(), pose);
   }
 
-  public CommandBase driveTrajectoryCommand(Trajectory trajectory) {
+  public Command driveTrajectoryCommand(Trajectory trajectory) {
     return new FunctionalCommand(
         () -> driveTrajectory(trajectory),
         () -> followTrajectory(),
@@ -294,7 +292,7 @@ public class Drive extends SubsystemBase {
     return state != States.TURN_ANGLE;
   }
 
-  public CommandBase turnAngleCommand(double angle) {
+  public Command turnAngleCommand(double angle) {
     return new FunctionalCommand(
         () -> setTurnStart(angle),
         () -> driveTurn(),
@@ -303,7 +301,7 @@ public class Drive extends SubsystemBase {
         this);
   }
 
-  public CommandBase turnExactAngle(double angle) {
+  public Command turnExactAngle(double angle) {
     return new FunctionalCommand(
         () -> setTurnAngle(angle),
         () -> driveTurn(),

@@ -87,7 +87,7 @@ public class RobotContainer {
     // add subsystem mechanisms
     SmartDashboard.putData("Arm Mechanism", mech);
 
-    isBlue = DriverStation.getAlliance() == DriverStation.Alliance.Blue;
+    isBlue = DriverStation.getAlliance().equals(DriverStation.Alliance.Blue);
 
     // Set up auto routines
     autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
