@@ -15,7 +15,7 @@ import frc.robot.commands.SpinAuto;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
 import frc.robot.subsystems.drive.DriveIOSim;
-import frc.robot.subsystems.drive.DriveIOSparkMax;
+import frc.robot.subsystems.drive.DriveIOTalon;
 import frc.robot.subsystems.drive.GyroIOReal;
 
 import frc.robot.util.CommandSnailController;
@@ -66,7 +66,7 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       // Real robot, instantiate hardware IO implementations
       case REAL:
-        drive = new Drive(new DriveIOSparkMax(), new Pose2d());
+        drive = new Drive(new DriveIOTalon(), new Pose2d());
         break;
 
       // Sim robot, instantiate physics sim IO implementations
