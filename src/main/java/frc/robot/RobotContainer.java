@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.SpinAuto;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
+import frc.robot.subsystems.drive.DriveIOCIM;
 import frc.robot.subsystems.drive.DriveIOSim;
 import frc.robot.subsystems.drive.DriveIOSparkMax;
 import frc.robot.subsystems.drive.GyroIOReal;
@@ -35,6 +36,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.swerve.Swerve;
+import edu.wpi.first.wpilibj.Filesystem;
+import java.io.File;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,7 +50,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final GyroIOReal gyro = GyroIOReal.getInstance();
+  private final Swerve drivebase = new Swerve(new File(Filesystem.getDeployDirectory(),
+                                                                         "swerve/neo"));
+  
 
   private Mechanism2d mech = new Mechanism2d(3, 3);
 
@@ -72,6 +78,9 @@ public class RobotContainer {
       // Sim robot, instantiate physics sim IO implementations
       case SIM:
         drive = new Drive(new DriveIOSim(), new Pose2d());
+        break;
+      case TEST:
+        drive = new Drive(new DriveIOCIM(), new Pose2d());
         break;
 
       // Replayed robot, disable IO implementations
