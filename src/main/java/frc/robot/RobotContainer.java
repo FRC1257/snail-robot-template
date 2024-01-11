@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.io.File;
 
@@ -50,9 +49,6 @@ import java.io.File;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final Swerve drivebase = new Swerve(new File(Filesystem.getDeployDirectory(),
-                                                                         "swerve/neo"));
-  
 
   private Mechanism2d mech = new Mechanism2d(3, 3);
 
