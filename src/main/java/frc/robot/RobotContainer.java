@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.SpinAuto;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.DriveIO;
+import frc.robot.subsystems.drive.DriveIOCIM;
 import frc.robot.subsystems.drive.DriveIOSim;
 import frc.robot.subsystems.drive.DriveIOTalon;
 import frc.robot.subsystems.drive.GyroIOReal;
@@ -35,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Filesystem;
+import java.io.File;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -46,7 +49,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
-  private final GyroIOReal gyro = GyroIOReal.getInstance();
 
   private Mechanism2d mech = new Mechanism2d(3, 3);
 
@@ -72,6 +74,9 @@ public class RobotContainer {
       // Sim robot, instantiate physics sim IO implementations
       case SIM:
         drive = new Drive(new DriveIOSim(), new Pose2d());
+        break;
+      case TEST:
+        drive = new Drive(new DriveIOCIM(), new Pose2d());
         break;
 
       // Replayed robot, disable IO implementations
@@ -108,6 +113,10 @@ public class RobotContainer {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
     drive.setDefaultCommand(
         new RunCommand(() -> drive.driveArcade(driver.getDriveForward(), driver.getDriveTurn()), drive));
+
+    driver.rightBumper().onTrue(
+      new StartEndCommand(() -> drive.startSlowMode(), () -> drive.stopSlowMode(), drive)
+    );
 
     // cancel trajectory
     driver.getY().onTrue(drive.endTrajectoryCommand());
