@@ -2,9 +2,9 @@ package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -23,8 +23,8 @@ public class DriveIOSparkMax implements DriveIO {
   private RelativeEncoder leftEncoder;
   private RelativeEncoder rightEncoder;
 
-  private SparkMaxPIDController leftPIDController;
-  private SparkMaxPIDController rightPIDController;
+  private SparkPIDController leftPIDController;
+  private SparkPIDController rightPIDController;
 
   private PIDController anglePIDController;
 

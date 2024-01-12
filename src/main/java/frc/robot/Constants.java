@@ -4,11 +4,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import swervelib.math.Matter;
-import swervelib.parser.PIDFConfig;
+import edu.wpi.first.math.Matrix;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -37,23 +42,7 @@ public final class Constants {
     REPLAY
   }
 
-  public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
-  public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
-  public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-
-  public static final class Auton
-  {
-
-    public static final PIDFConfig xAutoPID     = new PIDFConfig(0.7, 0, 0);
-    public static final PIDFConfig yAutoPID     = new PIDFConfig(0.7, 0, 0);
-    public static final PIDFConfig angleAutoPID = new PIDFConfig(0.4, 0, 0.01);
-
-    public static final double MAX_SPEED        = 4;
-    public static final double MAX_ACCELERATION = 2;
-  }
-
-  public static final class Drivebase
-  {
+  public static final class Drivebase {
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
@@ -86,9 +75,11 @@ public final class Constants {
     public static double DRIVE_TRAJ_KS = 0.0; // don't change
 
     // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or theoretically
+    // These characterization values MUST be determined either experimentally or
+    // theoretically
     // for *your* robot's drive.
-    // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
+    // The Robot Characterization Toolsuite provides a convenient tool for obtaining
+    // these
     // values for your robot.
     public static final double ksVolts = 0.22;
     public static final double kvVoltSecondsPerMeter = 1.98;
@@ -126,6 +117,23 @@ public final class Constants {
     public static final double TRACKED_TAG_AREA_DRIVE_KP = 0.2; // P (Proportional) constant of a PID loop
     public static final double APRILTAG_POWER_CAP = 0.75;
   };
+
+  public static class Vision {
+    public static final String kCameraName = "Front_Camera";
+    // Cam mounted facing forward, half a meter forward of center, half a meter up
+    // from center.
+    public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5),
+        new Rotation3d(0, 0, 0));
+
+    // The layout of the AprilTags on the field
+    public static final AprilTagFieldLayout kTagLayout = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+
+    // The standard deviations of our vision estimated poses, which affect
+    // correction rate
+    // (Fake values. Experiment and determine estimation noise on an actual robot.)
+    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+  }
 
   public static class ElectricalLayout {
     // Controllers

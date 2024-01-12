@@ -1,8 +1,8 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 
 public class DriveIOCIM implements DriveIO {
@@ -65,28 +65,23 @@ public class DriveIOCIM implements DriveIO {
     rightLeader.setVoltage(rightVolts);
   }
 
+  /* No encoders so no position or velocity control works */
   @Override
   public double getLeftPositionMeters() {
     return 0;
-    // return leftEncoder.getPosition() * leftEncoder.getPositionConversionFactor();
   }
 
   @Override
   public double getRightPositionMeters() {
-    // return rightEncoder.getPosition() * rightEncoder.getPositionConversionFactor();
     return 0;
   }
 
   @Override
   public void setVelocity(DifferentialDriveWheelSpeeds wheelSpeeds) {
-    // leftPIDController.setReference(wheelSpeeds.leftMetersPerSecond, ControlType.kVelocity, DRIVE_VEL_SLOT);
-    // rightPIDController.setReference(wheelSpeeds.rightMetersPerSecond, ControlType.kVelocity, DRIVE_VEL_SLOT);
   }
 
   @Override
   public void zero() {
     GyroIOReal.getInstance().zeroAll();
-    // leftEncoder.setPosition(0);
-    // rightEncoder.setPosition(0);
   }
 }
