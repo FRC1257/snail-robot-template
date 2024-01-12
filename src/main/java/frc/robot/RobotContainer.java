@@ -114,6 +114,10 @@ public class RobotContainer {
     drive.setDefaultCommand(
         new RunCommand(() -> drive.driveArcade(driver.getDriveForward(), driver.getDriveTurn()), drive));
 
+    driver.rightBumper().onTrue(
+      new StartEndCommand(() -> drive.startSlowMode(), () -> drive.stopSlowMode(), drive)
+    );
+
     // cancel trajectory
     driver.getY().onTrue(drive.endTrajectoryCommand());
   }

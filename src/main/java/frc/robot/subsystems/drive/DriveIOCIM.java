@@ -1,6 +1,7 @@
 package frc.robot.subsystems.drive;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 
@@ -14,9 +15,14 @@ public class DriveIOCIM implements DriveIO {
 
   public DriveIOCIM() {
     leftLeader = new CANSparkMax(17, MotorType.kBrushed);
-    rightLeader = new CANSparkMax(4, MotorType.kBrushed);
+    rightLeader = new CANSparkMax(4, MotorType.kBrushed); // coast
     leftFollower = new CANSparkMax(11, MotorType.kBrushed);
-    rightFollower = new CANSparkMax(10, MotorType.kBrushed);
+    rightFollower = new CANSparkMax(10, MotorType.kBrushed); // coast
+
+    leftLeader.setIdleMode(IdleMode.kBrake);
+    leftFollower.setIdleMode(IdleMode.kCoast);
+    rightLeader.setIdleMode(IdleMode.kBrake);
+    rightFollower.setIdleMode(IdleMode.kCoast);
 
     leftLeader.restoreFactoryDefaults();
     rightLeader.restoreFactoryDefaults();
