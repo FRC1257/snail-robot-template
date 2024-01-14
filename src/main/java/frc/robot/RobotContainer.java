@@ -18,7 +18,9 @@ import frc.robot.subsystems.drive.DriveIOCIM;
 import frc.robot.subsystems.drive.DriveIOSim;
 import frc.robot.subsystems.drive.DriveIOTalon;
 import frc.robot.subsystems.drive.GyroIOReal;
-
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOPhoton;
+import frc.robot.subsystems.vision.VisionIOSim;
 import frc.robot.util.CommandSnailController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -68,21 +70,20 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       // Real robot, instantiate hardware IO implementations
       case REAL:
-        drive = new Drive(new DriveIOTalon(), new Pose2d());
+        drive = new Drive(new DriveIOTalon(), new VisionIOPhoton(), new Pose2d());
         break;
 
       // Sim robot, instantiate physics sim IO implementations
       case SIM:
-        drive = new Drive(new DriveIOSim(), new Pose2d());
+        drive = new Drive(new DriveIOSim(), new VisionIOSim(), new Pose2d());
         break;
       case TEST:
-        drive = new Drive(new DriveIOCIM(), new Pose2d());
+        drive = new Drive(new DriveIOCIM(), new VisionIOPhoton(), new Pose2d());
         break;
 
       // Replayed robot, disable IO implementations
       default:
-        drive = new Drive(new DriveIO() {
-        }, new Pose2d());
+        drive = new Drive(new DriveIO() {}, new VisionIO() {}, new Pose2d());
         break;
     }
 

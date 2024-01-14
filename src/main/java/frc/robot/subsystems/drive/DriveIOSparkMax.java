@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 
 import static frc.robot.Constants.Drivetrain.*;
 import static frc.robot.Constants.UPDATE_PERIOD;
@@ -88,6 +89,7 @@ public class DriveIOSparkMax implements DriveIO {
     inputs.gyroRollPitchYawRad[0] = gyro.getRollAngle();
     inputs.gyroRollPitchYawRad[1] = gyro.getPitchAngle();
     inputs.gyroRollPitchYawRad[2] = gyro.getYawAngle();
+    inputs.timestamp = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -134,5 +136,10 @@ public class DriveIOSparkMax implements DriveIO {
     GyroIOReal.getInstance().zeroAll();
     leftEncoder.setPosition(0);
     rightEncoder.setPosition(0);
+  }
+
+  @Override
+  public double getRobotAngle() {
+    return GyroIOReal.getInstance().getRobotAngle();
   }
 }

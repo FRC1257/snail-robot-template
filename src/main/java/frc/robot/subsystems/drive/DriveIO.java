@@ -13,6 +13,7 @@ public interface DriveIO {
     public double rightVelocityRadPerSec = 0.0;
     public double gyroYawRad = 0.0;
     public double[] gyroRollPitchYawRad = new double[3];
+    public double timestamp = 0.0;
   }
 
   /** Updates the set of loggable inputs. */
@@ -28,6 +29,10 @@ public interface DriveIO {
   }
 
   public default double getRightPositionMeters() {
+    return 0.0;
+  }
+
+  public default double getRobotAngle() {
     return 0.0;
   }
 

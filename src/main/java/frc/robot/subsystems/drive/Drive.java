@@ -2,12 +2,9 @@ package frc.robot.subsystems.drive;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,17 +19,13 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.Drivetrain.*;
 
-import java.util.Map;
-
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOInputsAutoLogged;
 import frc.robot.util.ArcadeDrive;
 
 public class Drive extends SubsystemBase {
@@ -42,6 +35,10 @@ public class Drive extends SubsystemBase {
 
   private final DriveIO io;
   private final DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
+
+  private VisionIO visionIO;
+  private final VisionIOInputsAutoLogged visionIOInputs = new VisionIOInputsAutoLogged();
+
   private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(), 0.0, 0.0);
 
   private RamseteController ramseteController = new RamseteController(DRIVE_TRAJ_RAMSETE_B, DRIVE_TRAJ_RAMSETE_ZETA);
@@ -66,14 +63,15 @@ public class Drive extends SubsystemBase {
   private States state = States.MANUAL;
 
   /** Creates a new Drive. */
-  public Drive(DriveIO io, Pose2d initialPoseMeters) {
+  public Drive(DriveIO io, VisionIO visionIO, Pose2d initialPoseMeters) {
     this.io = io;
+    this.visionIO = visionIO;
 
     driveKinematics = new DifferentialDriveKinematics(io.getTrackWidth());
     SmartDashboard.putData(getName(), this);
     SmartDashboard.putData("Field", m_field);
     poseEstimator = new DifferentialDrivePoseEstimator(driveKinematics,
-        Rotation2d.fromDegrees(-GyroIOReal.getInstance().getRobotAngle()), io.getLeftPositionMeters(),
+        Rotation2d.fromDegrees(-io.getRobotAngle()), io.getLeftPositionMeters(),
         io.getRightPositionMeters(), initialPoseMeters);
   }
 
@@ -82,8 +80,24 @@ public class Drive extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Drive", inputs);
 
+    visionIO.updateInputs(visionIOInputs, getPose());
+    Logger.processInputs("Vision", visionIOInputs);
+
     // Update odometry and log the new pose
     odometry.update(new Rotation2d(-inputs.gyroYawRad), getLeftPositionMeters(), getRightPositionMeters());
+
+    var visionEst = visionIO.getEstimatedGlobalPose();
+    visionEst.ifPresent(
+        est -> {
+          var estPose = est.estimatedPose.toPose2d();
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = visionIO.getEstimationStdDevs(estPose);
+
+          poseEstimator.addVisionMeasurement(
+              est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+        });
+    poseEstimator.updateWithTime(inputs.timestamp, new Rotation2d(-inputs.gyroYawRad), getLeftPositionMeters(), getRightPositionMeters());
+
     Logger.recordOutput("Odometry", getPose());
 
     m_field.setRobotPose(getPose());
@@ -108,7 +122,7 @@ public class Drive extends SubsystemBase {
     } else {
       io.setVoltage(speeds.left * 12.0, speeds.right * 12.0);
     }
-    
+
   }
 
   public void followTrajectory() {
@@ -164,7 +178,7 @@ public class Drive extends SubsystemBase {
   }
 
   private void setRobotPose(Pose2d pose) {
-    poseEstimator.resetPosition(Rotation2d.fromDegrees(-GyroIOReal.getInstance().getRobotAngle()), io.getLeftPositionMeters(),
+    poseEstimator.resetPosition(Rotation2d.fromDegrees(-io.getRobotAngle()), io.getLeftPositionMeters(),
         io.getRightPositionMeters(), pose);
   }
 
@@ -189,13 +203,12 @@ public class Drive extends SubsystemBase {
   }
 
   public void zero() {
-    GyroIOReal.getInstance().zeroAll();
     io.zero();
   }
 
   /** Returns the current odometry pose in meters. */
   public Pose2d getPose() {
-    return odometry.getPoseMeters();
+    return poseEstimator.getEstimatedPosition();
   }
 
   public double getVelocityMetersPerSecond() {
@@ -227,7 +240,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(new Rotation2d(GyroIOReal.getInstance().getYawAngle()), getLeftPositionMeters(),
+    odometry.resetPosition(new Rotation2d(io.getRobotAngle()), getLeftPositionMeters(),
         getRightPositionMeters(), pose);
   }
 
@@ -259,7 +272,7 @@ public class Drive extends SubsystemBase {
     turnController.reset();
     turnController.setSetpoint(chooseClosestTarget());
     turnController.setTolerance(0.5);
-    
+
   }
 
   public double chooseClosestTarget() {
@@ -279,8 +292,6 @@ public class Drive extends SubsystemBase {
 
   public void driveTurn() {
     // comment this out while initially tuning
-    
-
 
     /*
      * if (pathTimer.get() > 10) {

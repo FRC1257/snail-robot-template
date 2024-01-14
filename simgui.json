@@ -17,7 +17,8 @@
       "/SmartDashboard/Drive": "Subsystem",
       "/SmartDashboard/Elevator": "Subsystem",
       "/SmartDashboard/Field": "Field2d",
-      "/SmartDashboard/PivotArm": "Subsystem"
+      "/SmartDashboard/PivotArm": "Subsystem",
+      "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Arm Mechanism": {
@@ -31,11 +32,17 @@
         }
       },
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\akash\\Downloads\\2023-field.png",
+        "bottom": 544,
+        "builtin": "2024 Crescendo",
+        "height": 8.013679504394531,
+        "left": 46,
+        "right": 1088,
+        "top": 36,
         "traj": {
           "arrows": false,
           "style": "Line"
         },
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
@@ -43,23 +50,26 @@
     }
   },
   "NetworkTables": {
+    "Retained Values": {
+      "open": false
+    },
     "transitory": {
       "AdvantageKit": {
-        "Drive": {
-          "open": true
-        },
         "DriverStation": {
           "Joystick0": {
             "open": true
-          },
-          "open": true
+          }
         },
         "Elevator": {
           "open": true
         },
         "PivotArm": {
           "open": true
-        }
+        },
+        "Vision": {
+          "open": true
+        },
+        "open": true
       },
       "FMSInfo": {
         "open": true
@@ -69,7 +79,13 @@
       },
       "SmartDashboard": {
         "open": true
+      },
+      "photonvision": {
+        "open": true
       }
     }
+  },
+  "NetworkTables Info": {
+    "visible": true
   }
 }

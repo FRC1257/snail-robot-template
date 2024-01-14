@@ -17,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.*;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DriveIOTalon implements DriveIO {
     private final WPI_VictorSPX leftLeader = new WPI_VictorSPX(4);
@@ -48,6 +49,7 @@ public class DriveIOTalon implements DriveIO {
         inputs.gyroRollPitchYawRad[0] = gyro.getRollAngle();
         inputs.gyroRollPitchYawRad[1] = gyro.getPitchAngle();
         inputs.gyroRollPitchYawRad[2] = gyro.getYawAngle();
+        inputs.timestamp = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -74,5 +76,10 @@ public class DriveIOTalon implements DriveIO {
     @Override
     public void zero() {
         GyroIOReal.getInstance().zeroAll();
+    }
+
+    @Override
+    public double getRobotAngle() {
+        return GyroIOReal.getInstance().getYawAngle();
     }
 }

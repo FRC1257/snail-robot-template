@@ -4,6 +4,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
@@ -30,6 +31,7 @@ public class DriveIOSim implements DriveIO {
     inputs.rightPositionRad = sim.getRightPositionMeters() / Drive.WHEEL_RADIUS_METERS;
     inputs.rightVelocityRadPerSec = sim.getRightVelocityMetersPerSecond() / Drive.WHEEL_RADIUS_METERS;
     inputs.gyroYawRad = sim.getHeading().getRadians() * -1;
+    inputs.timestamp = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -62,5 +64,10 @@ public class DriveIOSim implements DriveIO {
   @Override
   public double getTrackWidth() {
     return Units.inchesToMeters(26);
+  }
+
+  @Override
+  public double getRobotAngle() {
+    return sim.getHeading().getRadians() * -1;
   }
 }

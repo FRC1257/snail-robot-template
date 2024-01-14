@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DriveIOCIM implements DriveIO {
   private final CANSparkMax leftLeader;
@@ -57,6 +58,7 @@ public class DriveIOCIM implements DriveIO {
     inputs.gyroRollPitchYawRad[0] = gyro.getRollAngle();
     inputs.gyroRollPitchYawRad[1] = gyro.getPitchAngle();
     inputs.gyroRollPitchYawRad[2] = gyro.getYawAngle();
+    inputs.timestamp = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -84,4 +86,10 @@ public class DriveIOCIM implements DriveIO {
   public void zero() {
     GyroIOReal.getInstance().zeroAll();
   }
+
+  @Override
+  public double getRobotAngle() {
+    return GyroIOReal.getInstance().getYawAngle();
+  }
+  
 }
