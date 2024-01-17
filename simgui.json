@@ -21,11 +21,6 @@
       "/SmartDashboard/VisionSystemSim-main/Sim Field": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/Arm Mechanism": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Auto Choices": {
         "window": {
           "visible": true
@@ -50,11 +45,20 @@
     }
   },
   "NetworkTables": {
+    "Persistent Values": {
+      "open": false
+    },
     "Retained Values": {
       "open": false
     },
     "transitory": {
       "AdvantageKit": {
+        ".schema": {
+          "open": true
+        },
+        "Drive": {
+          "open": true
+        },
         "DriverStation": {
           "Joystick0": {
             "open": true
@@ -71,9 +75,6 @@
         },
         "open": true
       },
-      "FMSInfo": {
-        "open": true
-      },
       "Shuffleboard": {
         "open": true
       },
@@ -84,8 +85,5 @@
         "open": true
       }
     }
-  },
-  "NetworkTables Info": {
-    "visible": true
   }
 }
