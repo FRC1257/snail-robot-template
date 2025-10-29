@@ -7,11 +7,7 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkFlexConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class SparkMotorIO implements MotorIO {
   protected final SparkBase sparkMotor;
@@ -23,24 +19,8 @@ public class SparkMotorIO implements MotorIO {
     this.sparkEncoder = sparkMotor.getEncoder();
     this.sparkController = sparkMotor.getClosedLoopController();
 
-    applyConfig(config);
-  }
-
-  private void applyConfig(SparkBaseConfig config) {
-
-    SparkBaseConfig sparkConfig;
-
-    if (sparkMotor instanceof SparkMax) {
-      sparkConfig = new SparkMaxConfig();
-    } else if (sparkMotor instanceof SparkFlex) {
-      sparkConfig = new SparkFlexConfig();
-    } else {
-      throw new IllegalArgumentException("Unsupported Spark motor type");
-    }
-
-    sparkConfig.apply(config);
-    sparkMotor.configure(
-        sparkConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    this.sparkMotor.configure(
+        config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
