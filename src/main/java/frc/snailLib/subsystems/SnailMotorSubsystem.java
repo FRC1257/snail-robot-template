@@ -6,15 +6,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
-public class SnailMotorSubsystem<T extends MotorInputsAutoLogged, U extends MotorIO>
+public class SnailMotorSubsystem<T extends MotorInputsAutoLogged, IO extends MotorIO>
     extends SubsystemBase {
 
-  protected U subsystemIO;
+  protected IO subsystemIO;
   protected T subsystemInputs;
 
   protected double positionSetpoint = 0.0;
 
-  public SnailMotorSubsystem(U io, T inputs, String name) {
+  public SnailMotorSubsystem(IO io, T inputs, String name) {
     super(name);
     this.subsystemIO = io;
     this.subsystemInputs = inputs;
